@@ -112,6 +112,7 @@ _SpecRunner.html
 *.ttf
 *.eot
 public/
+sei-upload_accessKeys.csv
 
 ### Ruby ###
 *.gem
