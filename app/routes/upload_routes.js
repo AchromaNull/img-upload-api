@@ -31,5 +31,15 @@ router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) 
     })
     .catch(next)
 })
+router.get('/uploads', (req, res, next) => {
+  console.log(req)
+  Upload.find()
+    .then((uploads) => {
+      console.log(uploads)
+      return uploads.map((upload) => upload.toObject())
+    })
+    .then((uploads) => res.status(200).json({ uploads }))
+    .catch(next)
+})
 
 module.exports = router
