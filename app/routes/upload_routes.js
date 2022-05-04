@@ -8,9 +8,9 @@ const s3Upload = require('../../lib/s3_upload')
 const passport = require('passport')
 const requireToken = passport.authenticate('bearer', { session: false })
 
-router.post('/testupload', (req, res, next) => {
-  console.log(req.user)
-})
+// router.post('/testupload', (req, res, next) => {
+//   console.log(req.user)
+// })
 
 router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) => {
   console.log(req.user)
