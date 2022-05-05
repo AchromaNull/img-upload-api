@@ -35,8 +35,8 @@ router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) 
     })
     .catch(next)
 })
-router.get('/uploads', (req, res, next) => {
-  Upload.find()
+router.get('/uploads', requireToken, (req, res, next) => {
+  Upload.find({ owner: req.user.id })
     .then((uploads) => {
       return uploads.map((upload) => upload.toObject())
     })
