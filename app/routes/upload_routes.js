@@ -21,9 +21,11 @@ router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) 
 
   s3Upload(req.file)
     .then(awsFile => {
-      // console.log(req)
+      console.log(awsFile)
+      console.log(req.file)
       // this is the post to Mongo
-      return Upload.create({ url: awsFile.Location, owner: req.user._id })
+      return Upload.create({ url: awsFile.Location, owner: req.user._id, title: req.body.title, caption: req.body.caption })
+      // removed , title: req.file.originalname from above
     })
   // req.body => { upload: url: 'www.google.com}
     .then(uploadDoc => {
