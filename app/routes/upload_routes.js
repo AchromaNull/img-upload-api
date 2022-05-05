@@ -13,10 +13,7 @@ const handle404 = customErrors.handle404
 const requireOwnership = customErrors.requireOwnership
 const ObjectId = require('mongodb').ObjectId
 
-// router.post('/testupload', (req, res, next) => {
-//   console.log(req.user)
-// })
-
+// POST Create Upload
 router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) => {
   // console.log(req.user)
   // req.upload.owner = req.user._id
@@ -36,17 +33,16 @@ router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) 
     })
     .catch(next)
 })
-router.get('/uploads', (req, res, next) => {
+
+// GET Index Uploads
+router.get('/uploads', requireToken, (req, res, next) => {
   console.log(req)
   Upload.find()
-    .then((uploads) => {
-      console.log(uploads)
-      return uploads.map((upload) => upload.toObject())
-    })
-    .then((uploads) => res.status(200).json({ uploads }))
+    .then(uploads => res.status(200).json({ uploads: uploads }))
     .catch(next)
 })
 
+// DELETE Upload
 router.delete('/delete/:id', requireToken, (req, res, next) => {
   console.log(req.path)
   console.log(req.params)
