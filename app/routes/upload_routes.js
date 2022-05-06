@@ -16,18 +16,12 @@ const ObjectId = require('mongodb').ObjectId
 // router.post('/testupload', (req, res, next) => {
 //   console.log(req.user)
 // })
-
+// route for signed in user to upload an image to AWS and create a database record
 router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) => {
-  // console.log(req.user)
-  // req.upload.owner = req.user._id
-  // follow this pattern vv and add user to file? or include in body from the request
-  // will need to require token
-
   s3Upload(req.file, req.body)
     .then(awsFile => {
       // this is the post to Mongo
       return Upload.create({ url: awsFile.Location, owner: req.user._id, title: req.body.title, caption: req.body.caption })
-      // removed , title: req.file.originalname from above
     })
   // req.body => { upload: url: 'www.google.com}
     .then(uploadDoc => {
@@ -35,7 +29,20 @@ router.post('/uploads', requireToken, upload.single('upload'), (req, res, next) 
     })
     .catch(next)
 })
-router.get('/uploads', (req, res, next) => {
+// get route to index signed-in user's images
+router.get('/uploads', requireToken, (req, res, next) => {
+  Upload.find({ owner: req.user.id })
+    .then((uploads) => {
+      return uploads.map((upload) => upload.toObject())
+    })
+    .then((uploads) => res.status(200).json(uploads))
+    .catch(next)
+})
+
+// get route to ALL user's images as a signed-in user
+// not functioning fully yet, need to revisit
+// still returning all images when first signing in
+router.get('/all-images', (req, res, next) => {
   Upload.find()
     .then((uploads) => {
       return uploads.map((upload) => upload.toObject())
@@ -44,6 +51,7 @@ router.get('/uploads', (req, res, next) => {
     .catch(next)
 })
 
+// delete route to delete an image from a signed in user
 router.delete('/delete/:id', requireToken, (req, res, next) => {
   console.log(req.path)
   console.log(req.params)
@@ -61,47 +69,16 @@ router.delete('/delete/:id', requireToken, (req, res, next) => {
     // if an error occurs, pass it to the handler
     .catch(next)
 })
-
-router.patch('/update/:id', requireToken, (req, res, next) => {
-  const imageId = req.params.id
-  // console.log(req.user)
-  // upload.single('upload'),
-  // req.upload.owner = req.user._id
-  // follow this pattern vv and add user to file? or include in body from the request
-  // will need to require token
-
-  // s3Upload(req.file, req.body)
-  //   .then(awsFile => {
-  //     console.log(awsFile)
-  //     console.log(req.file)
-  //     // this is the post to Mongo
-  Upload.findById(imageId)
-    .then(handle404)
-    .then(upload => {
-      // throw an error if current user doesn't own `example`
-      requireOwnership(req, upload)
-
-      return Upload.create({ title: req.body.title, caption: req.body.caption })
-      // removed , title: req.file.originalname from above
-    })
-  // req.body => { upload: url: 'www.google.com}
-    .then(uploadDoc => {
-      res.status(201).json({ upload: uploadDoc })
-    })
-    .catch(next)
-})
-// router.delete('/delete', requireToken, upload.single('upload'), (req, res, next) => {
-//   console.log(req.user)
-//   // console.log('req.file', req)
-//   // req.upload.owner = req.user._id
-//   // follow this pattern vv and add user to file? or include in body from the request
-//   // will need to require token
-
-//   s3Upload(req.file)
-//     .then(awsFile => {
-//       console.log('req.body', req.body)
-//       // this is the post to Mongo
-//       return Upload.create({ url: awsFile.Location, owner: req.user._id })
+// patch route to update data for an image for a signed in user
+// router.patch('/update/:id', requireToken, (req, res, next) => {
+//   const imageId = req.params.id
+//     .then(handle404)
+//     .then(upload => {
+//       // throw an error if current user doesn't own `example`
+//       requireOwnership(req, upload)
+//       return Upload.create({ url: awsFile.Location, owner: req.user._id, title: req.body.title, caption: req.body.caption })
+//       return Upload.create({ title: req.body.title, caption: req.body.caption })
+//       // removed , title: req.file.originalname from above
 //     })
 //   // req.body => { upload: url: 'www.google.com}
 //     .then(uploadDoc => {
