@@ -53,8 +53,6 @@ router.get('/all-images', (req, res, next) => {
 
 // delete route to delete an image from a signed in user
 router.delete('/delete/:id', requireToken, (req, res, next) => {
-  console.log(req.path)
-  console.log(req.params)
   const imageId = req.params.id
   Upload.findById(imageId)
     .then(handle404)
@@ -82,7 +80,6 @@ router.patch('/uploads/:id', upload.none(), requireToken, (req, res, next) => {
     .then((event) => requireOwnership(req, event))
   // update event
     .then((event) => {
-      console.log(eventData)
       // updating event object
       // // with eventData
       Object.assign(event, eventData)
