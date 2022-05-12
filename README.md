@@ -3,8 +3,8 @@
 This is the frontend repo for our full stack image upload application. This app uses MongoDB as a database and integrates AWS for image storage, allowing users to upload photos with additional information and then access those photos from their thumbnails.
 
 ## Links 
-- [Deployed App]()
-- [Backend Repo]()
+- [Deployed App](https://achromanull.github.io/img-upload-client/)
+- [Frontend Repo](https://github.com/AchromaNull/img-upload-client)
 
 ### Technologies Used
 
@@ -18,6 +18,26 @@ Backend:
 - MongoDB
 - Mongoose
 - AWS S3
+
+## API
+
+### Authentication
+
+| HTTP Method | URL Path      | Action |
+|--------|--------------------|-------------|
+| POST   | `/sign-up`          | sign-up    |
+| POST   | `/sign-in`          | sign-in    |
+| PATCH  | `/change-password/` | change password  |
+| DELETE | `/sign-out/`        | sign-out   |
+
+### Image Uploads
+
+| HTTP Method   | URL Path        | Action |
+|--------|------------------------|-------------------|
+| POST   | `/uploads`             | uploads an image |
+| GET   | `/uploads`             | shows all uploaded images from all users    |
+| PATCH  | `/uploads/:id` | updates upload details  |
+| DELETE | `/delete/:id`        | deletes uploaded image   |
 
 ## Planning
 

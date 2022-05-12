@@ -53,8 +53,6 @@ router.get('/all-images', (req, res, next) => {
 
 // delete route to delete an image from a signed in user
 router.delete('/delete/:id', requireToken, (req, res, next) => {
-  console.log(req.path)
-  console.log(req.params)
   const imageId = req.params.id
   Upload.findById(imageId)
     .then(handle404)
@@ -67,6 +65,30 @@ router.delete('/delete/:id', requireToken, (req, res, next) => {
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))
     // if an error occurs, pass it to the handler
+    .catch(next)
+})
+
+router.patch('/uploads/:id', upload.none(), requireToken, (req, res, next) => {
+  // get id of event from params
+  const id = req.params.id
+  // get event data from request
+  const eventData = req.body.updateData
+  // fetching event by its id
+  Upload.findById(id)
+  // handle 404 error if no event found
+    .then(handle404)
+    .then((event) => requireOwnership(req, event))
+  // update event
+    .then((event) => {
+      // updating event object
+      // // with eventData
+      Object.assign(event, eventData)
+      // save event to mongodb
+      return event.save()
+    })
+  // if successful return 204
+    .then(() => res.sendStatus(204))
+  // on error go to next middleware
     .catch(next)
 })
 // patch route to update data for an image for a signed in user
